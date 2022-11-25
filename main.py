@@ -13,17 +13,12 @@ class Start(State):
 
 class Cleaning(State):
     def execute(self):
-        print("The washing machine is currently in the cleaning cycle")
+        print("The washing machine is currently running the cleaning cycle")
 
 
 class Drying(State):
     def execute(self):
-        print("The washing machine is currently in the drying cycle")
-
-
-class Finished(State):
-    def execute(self):
-        print("The washing machine is finished")
+        print("The washing machine is currently running the drying cycle")
 
 
 # Allows the FSM to transition to a different state (Takes string)
@@ -78,10 +73,8 @@ if __name__ == "__main__":
     washingMachine.FSM.states["Start"] = Start()
     washingMachine.FSM.states["Clean"] = Cleaning()
     washingMachine.FSM.states["Dry"] = Drying()
-    washingMachine.FSM.states["Fin"] = Finished()
     washingMachine.FSM.transitions["toWash"] = Transition("Clean")
     washingMachine.FSM.transitions["toDry"] = Transition("Dry")
-    washingMachine.FSM.transitions["Finish"] = Transition("Fin")
 
     washingMachine.FSM.setState("Start")
 
@@ -92,17 +85,22 @@ if __name__ == "__main__":
         while startTime + timeInterval > time.time():
             pass
 
-        if randint(0, 3):
-            if washingMachine.Start:
+        fsmInput = input("Please select what cycle you would like to activate \n"
+                         "1. Washing Cycle \n"
+                         "2. Drying Cycle \n"
+                         "3. Exit \n"
+                         "Enter your choice ")
+
+        match fsmInput:
+            case "1":
                 washingMachine.FSM.Transition("toWash")
                 washingMachine.Start = False
 
-            elif washingMachine.Cleaning:
+            case "2":
                 washingMachine.FSM.Transition("toDry")
-                washingMachine.Cleaning = False
+                washingMachine.Start = False
 
-            elif washingMachine.Drying:
-                washingMachine.FSM.Transition("Finish")
-                washingMachine.Drying = False
+            case "3":
+                break
 
         washingMachine.FSM.execute()
