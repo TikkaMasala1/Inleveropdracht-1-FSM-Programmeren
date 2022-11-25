@@ -1,5 +1,5 @@
+import time
 from random import randint
-from time import process_time
 
 # State baseclass
 State = type("State", (object,), {})
@@ -8,17 +8,22 @@ State = type("State", (object,), {})
 # All the FSM classes
 class Start(State):
     def execute(self):
-        print("The washing Machine is idle and ready to clean")
+        print("The washing machine is idle and ready to clean")
 
 
 class Cleaning(State):
     def execute(self):
-        print("The washing Machine is currently in the cleaning cycle")
+        print("The washing machine is currently in the cleaning cycle")
 
 
 class Drying(State):
     def execute(self):
-        print("The washing Machine is currently in the drying cycle")
+        print("The washing machine is currently in the drying cycle")
+
+
+class Finished(State):
+    def execute(self):
+        print("The washing machine is finished")
 
 
 # Allows the FSM to transition to a different state (Takes string)
@@ -39,7 +44,7 @@ class FiniteStateMachine(object):
         self.curState = None
         self.trans = None
 
-    def SetState(self, stateName):
+    def setState(self, stateName):
         # Reads the state in the state dict above
         self.curState = self.states[stateName]
 
@@ -52,7 +57,7 @@ class FiniteStateMachine(object):
         # transition is to, and lastly it resets the transition
         if self.trans:
             self.trans.execute()
-            self.SetState(self.trans.toState)
+            self.setState(self.trans.toState)
             self.trans = None
         self.curState.execute()
 
@@ -62,3 +67,40 @@ class Char(object):
     def __init__(self):
         self.FSM = FiniteStateMachine(self)
         self.Start = True
+
+
+if __name__ == "__main__":
+    washingMachine = Char()
+
+    washingMachine.FSM.states["Start"] = Start()
+    washingMachine.FSM.states["Clean"] = Cleaning()
+    washingMachine.FSM.states["Dry"] = Drying()
+    washingMachine.FSM.states["Fin"] = Finished()
+    washingMachine.FSM.transitions["toWash"] = Transition("Clean")
+    washingMachine.FSM.transitions["toDry"] = Transition("Dry")
+    washingMachine.FSM.transitions["Finish"] = Transition("Fin")
+
+    washingMachine.FSM.setState("Start")
+
+    for i in range(20):
+        startTime = time.time()
+        timeInterval = 1
+
+        while startTime + timeInterval > time.time():
+            pass
+
+        if randint(0, 3):
+            if washingMachine.Start:
+                washingMachine.FSM.Transition("toDry")
+                washingMachine.Start = False
+
+            elif washingMachine.Cleaning:
+                washingMachine.FSM.Transition("toDry")
+                washingMachine.Cleaning = False
+
+            elif washingMachine.Drying:
+                washingMachine.FSM.Transition("Done")
+                washingMachine.Drying = False
+
+        washingMachine.FSM.execute()
+
