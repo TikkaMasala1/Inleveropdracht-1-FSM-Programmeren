@@ -67,6 +67,9 @@ class Char(object):
     def __init__(self):
         self.FSM = FiniteStateMachine(self)
         self.Start = True
+        self.Cleaning = True
+        self.Drying = True
+        self.Finished = True
 
 
 if __name__ == "__main__":
@@ -91,7 +94,7 @@ if __name__ == "__main__":
 
         if randint(0, 3):
             if washingMachine.Start:
-                washingMachine.FSM.Transition("toDry")
+                washingMachine.FSM.Transition("toWash")
                 washingMachine.Start = False
 
             elif washingMachine.Cleaning:
@@ -99,8 +102,7 @@ if __name__ == "__main__":
                 washingMachine.Cleaning = False
 
             elif washingMachine.Drying:
-                washingMachine.FSM.Transition("Done")
+                washingMachine.FSM.Transition("Finish")
                 washingMachine.Drying = False
 
         washingMachine.FSM.execute()
-
